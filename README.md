@@ -1,5 +1,7 @@
 # StickerMint
 
+**Live:** https://stickermint-app.vercel.app
+
 I kept making one-off stickers for friends by screenshotting photos and
 cropping them in my phone's gallery, and the results always came out
 blurry, the wrong size, or with half the caption cut off. WhatsApp wants
