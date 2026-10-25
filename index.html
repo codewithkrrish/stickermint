@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StickerMint — Make WhatsApp Stickers in Your Browser</title>
+  <meta name="description" content="Turn any photo into a 512x512 WebP WhatsApp sticker right in your browser: crop, round the corners, add a caption, erase a plain background, and build a pack of up to 30 stickers. No uploads, no sign-up." />
+  <meta name="theme-color" content="#0B0B0F" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://stickermint.vercel.app/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="StickerMint — Make WhatsApp stickers in your browser" />
+  <meta property="og:description" content="Crop, caption and pack 512x512 WebP stickers without uploading a single photo." />
+  <meta property="og:site_name" content="StickerMint" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="StickerMint — Browser WhatsApp Sticker Maker" />
+  <meta name="twitter:description" content="Turn photos into 512x512 WebP stickers in your browser. Your photos never leave your device." />
+
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+
+  <!-- JSZip powers "Download pack as ZIP". app.js falls back to
+       sequential downloads if this CDN is unreachable. -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" defer></script>
+  <script type="module" src="js/app.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="./" aria-label="StickerMint home">
+        <span class="brand-mark" aria-hidden="true">S</span>
+        <span>StickerMint</span>
+      </a>
+      <nav class="header-nav" aria-label="Primary">
+        <a href="#tool">Maker</a>
+        <a href="#how">How it works</a>
+        <a href="#limits">Limitations</a>
+        <a class="btn-github" href="https://github.com/codewithkrrish/stickermint" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero container">
+      <span class="eyebrow">100% in your browser</span>
+      <h1>Photos in. Stickers out.<br /><span>Nothing leaves your device.</span></h1>
+      <p>Crop a photo, round the corners, add a caption, erase a plain background, and pack up to 30 stickers — every one exported at exactly 512 x 512 WebP, the size WhatsApp wants.</p>
+      <ul class="hero-points">
+        <li>Exact 512 x 512 WebP output</li>
+        <li>Interactive crop box</li>
+        <li>Caption with outline</li>
+        <li>Packs up to 30, ZIP export</li>
+      </ul>
+    </section>
+
+    <section class="tool-section container" id="tool" aria-label="Sticker maker">
+      <p class="section-label">Step 1 — Add a photo</p>
+      <div
+        class="dropzone"
+        id="dropzone"
+        tabindex="0"
+        role="button"
+        aria-label="Add a photo. Press Enter to browse, or drag and drop an image file here."
+      >
+        <div class="dropzone-icon" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="m6 10 6-6 6 6"/><path d="M4 20h16"/></svg>
+        </div>
+        <h2>Drag and drop a photo here</h2>
+        <p>or <span class="browse">browse from your device</span> — you can also paste with Ctrl+V</p>
+        <p class="dropzone-formats">JPG &nbsp;·&nbsp; PNG &nbsp;·&nbsp; WEBP</p>
+        <input
+          class="visually-hidden"
+          type="file"
+          id="fileInput"
+          accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp"
+        />
+      </div>
+      <button class="btn-secondary" type="button" id="sampleBtn">Try the built-in sample photo instead</button>
+
+      <div class="workbench">
+        <div class="panel">
+          <p class="section-label">Step 2 — Crop</p>
+          <canvas id="cropCanvas" width="640" height="480" aria-label="Crop editor. Drag the box to move it, drag a corner to resize it, click the photo to pick an erase colour."></canvas>
+          <p class="hint" id="cropHint">Drag the red box to move it, drag a corner to resize it. Click anywhere on the photo to pick a colour for the erase assist.</p>
+
+          <div class="control-group">
+            <span class="control-label">Crop shape</span>
+            <div class="mode-row" role="group" aria-label="Crop shape">
+              <button type="button" id="modeFree" aria-pressed="true">Free</button>
+              <button type="button" id="modeSquare" aria-pressed="false">Square</button>
+              <button type="button" id="modeRounded" aria-pressed="false">Rounded</button>
+            </div>
+          </div>
+
+          <div class="control-group" id="radiusRow" hidden>
+            <label class="control-label" for="radiusRange">Corner radius: <span id="radiusValue">40</span></label>
+            <input type="range" id="radiusRange" min="0" max="100" value="40" />
+            <p class="hint">100 rounds the sticker into a full circle. The output stays 512 x 512.</p>
+          </div>
+
+          <div class="control-group">
+            <label class="control-label" for="borderRange">White border: <span id="borderValue">12 px</span></label>
+            <label class="check"><input type="checkbox" id="borderToggle" checked /> White border on</label>
+            <input type="range" id="borderRange" min="0" max="40" value="12" />
+            <label class="check"><input type="checkbox" id="shadowToggle" checked /> Soft shadow</label>
+          </div>
+        </div>
+
+        <div class="panel">
+          <p class="section-label">Step 3 — Caption and erase assist</p>
+          <div class="control-group">
+            <label class="control-label" for="captionText">Caption text</label>
+            <input type="text" id="captionText" placeholder="Type a caption, e.g. Good morning" maxlength="60" />
+            <label class="control-label" for="captionSize">Caption size: <span id="captionSizeValue">48 px</span></label>
+            <input type="range" id="captionSize" min="20" max="110" value="48" />
+            <label class="control-label" for="captionColor">Caption colour</label>
+            <input type="color" id="captionColor" value="#ffffff" />
+            <label class="check"><input type="checkbox" id="captionStroke" checked /> Dark outline around the text</label>
+            <label class="control-label" for="captionPosition">Caption position</label>
+            <select id="captionPosition">
+              <option value="top">Top</option>
+              <option value="bottom" selected>Bottom</option>
+              <option value="center">Center</option>
+              <option value="custom">Custom (drag on preview)</option>
+            </select>
+            <p class="hint">Drag the caption directly on the preview to place it anywhere — the position switches to Custom.</p>
+          </div>
+
+          <div class="control-group">
+            <span class="control-label">Erase-by-colour assist</span>
+            <p class="hint">A simple assist, not an AI cutout: it removes a plain colour that touches the photo edges, so a matching colour inside your subject is kept. Click the photo to pick the colour, then adjust tolerance.</p>
+            <label class="check"><input type="checkbox" id="eraseToggle" /> Erase assist on</label>
+            <label class="control-label" for="eraseTolerance">Tolerance: <span id="eraseToleranceValue">40</span></label>
+            <input type="range" id="eraseTolerance" min="0" max="160" value="40" />
+            <p class="hint"><span class="swatch" id="eraseSwatch"></span> <span id="eraseLabel">No colour picked yet. Click the photo to pick one.</span></p>
+            <button class="btn-secondary" type="button" id="clearEraseBtn">Clear erase</button>
+          </div>
+        </div>
+
+        <div class="panel preview-panel">
+          <p class="section-label">Live preview — exactly 512 x 512</p>
+          <canvas id="previewCanvas" width="512" height="512" aria-label="Sticker preview. Drag on it to move the caption."></canvas>
+          <p class="hint" id="statusText">No photo yet — upload one, paste one, or try the sample photo.</p>
+          <div class="actions">
+            <button class="btn-primary" type="button" id="downloadBtn">Download this sticker (WebP)</button>
+            <button class="btn-secondary" type="button" id="addToPackBtn">Add to pack</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel pack-panel">
+        <p class="section-label">Step 4 — Your pack</p>
+        <p class="hint" id="packCount">0/30 stickers</p>
+        <p class="hint" id="packEmpty">Your pack is empty. Finish a sticker and press "Add to pack".</p>
+        <div class="pack-grid" id="packGrid"></div>
+        <div class="actions">
+          <button class="btn-primary" type="button" id="downloadZipBtn">Download pack as ZIP</button>
+          <button class="btn-secondary" type="button" id="clearPackBtn">Clear pack</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="info container" id="how" aria-label="How it works">
+      <h2>How it works</h2>
+      <ol>
+        <li><strong>Add a photo.</strong> Upload, drag in, paste, or use the built-in sample. Your photo is drawn to a canvas in your browser and never sent anywhere.</li>
+        <li><strong>Crop it.</strong> Drag the box, resize from a corner, or switch to a square or rounded crop.</li>
+        <li><strong>Style it.</strong> White border, soft shadow, and a caption you can drag to any spot on the sticker.</li>
+        <li><strong>Pack it.</strong> Add up to 30 stickers, reorder or remove them, then download one sticker or the whole pack as a ZIP of WebP files.</li>
+      </ol>
+      <p>To use a pack in WhatsApp, import the downloaded WebP files with any sticker-maker app that accepts custom WebP stickers, or add them through WhatsApp's sticker tools. StickerMint itself does not publish to WhatsApp — that step needs a WhatsApp-approved sticker app.</p>
+    </section>
+
+    <section class="info container" id="limits" aria-label="Limitations">
+      <h2>Honest limitations</h2>
+      <ul>
+        <li><strong>Erase assist is not AI.</strong> It only removes a fairly uniform colour connected to the photo edges. Busy backgrounds, hair, and gradients will not cut out cleanly, and there is no manual cleanup brush yet.</li>
+        <li><strong>WebP only.</strong> Stickers export as WebP because that is what WhatsApp stickers use. If your browser cannot export WebP (very old browsers), the download button will say so instead of silently failing.</li>
+        <li><strong>Photo size.</strong> Photos larger than 2000 px on the longest side are scaled down first, to keep the editor fast. Very large packs (30 stickers) use more memory; download the ZIP before starting a new pack.</li>
+        <li><strong>Formats.</strong> JPG, PNG and WebP photos work. HEIC photos from some phones will not open in most browsers — convert to JPG first.</li>
+        <li><strong>WhatsApp import is separate.</strong> StickerMint makes the files; getting them into WhatsApp still needs a sticker app or WhatsApp's own import flow.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>Built by krrish</p>
+      <p>
+        <a href="https://github.com/codewithkrrish/stickermint" target="_blank" rel="noopener noreferrer">GitHub</a>
+        &nbsp;·&nbsp;
+        <a href="https://www.instagram.com/krrishx.ai" target="_blank" rel="noopener noreferrer">Instagram</a>
+      </p>
+      <p>Your photos are processed locally in your browser and never uploaded.</p>
+    </div>
+  </footer>
+
+  <div class="toast-region" id="toastRegion" aria-live="polite"></div>
+</body>
+</html>

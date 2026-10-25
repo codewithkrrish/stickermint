@@ -1,0 +1,117 @@
+/* StickerMint — PixelPress design system */
+:root {
+  --bg: #0b0b0f;
+  --surface: #121218;
+  --border: #23232e;
+  --text: #f5f5f7;
+  --muted: #9a9aa5;
+  --accent: #e5484d;
+  --radius: 14px;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+  line-height: 1.55;
+}
+a { color: var(--text); }
+.container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+.site-header { border-bottom: 1px solid var(--border); }
+.header-inner { display: flex; align-items: center; justify-content: space-between; min-height: 64px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; text-decoration: none; }
+.brand-mark {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 9px;
+  background: var(--accent); color: #fff; font-weight: 800;
+}
+.header-nav { display: flex; gap: 18px; align-items: center; }
+.header-nav a { text-decoration: none; color: var(--muted); font-weight: 600; }
+.header-nav a:hover { color: var(--text); }
+.btn-github {
+  border: 1px solid var(--border); border-radius: 999px; padding: 7px 14px;
+  color: var(--text) !important;
+}
+.hero { padding: 56px 20px 32px; }
+.eyebrow {
+  display: inline-block; font-size: 13px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--accent);
+}
+.hero h1 { font-size: clamp(32px, 5vw, 54px); line-height: 1.08; margin: 14px 0; }
+.hero h1 span { color: var(--muted); }
+.hero p { color: var(--muted); max-width: 720px; font-size: 18px; }
+.hero-points { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 10px 24px; color: var(--muted); }
+.hero-points li::before { content: "— "; color: var(--accent); }
+.tool-section { padding-bottom: 40px; }
+.section-label { font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.dropzone {
+  border: 2px dashed var(--border); border-radius: var(--radius);
+  background: var(--surface); padding: 36px 20px; text-align: center; cursor: pointer;
+}
+.dropzone.dragging { border-color: var(--accent); }
+.dropzone h2 { margin: 8px 0 4px; }
+.dropzone p { color: var(--muted); margin: 4px 0; }
+.browse { color: var(--text); text-decoration: underline; }
+.dropzone-formats { font-size: 13px; letter-spacing: 0.06em; }
+.dropzone-icon { color: var(--accent); }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.workbench { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 18px; }
+.preview-panel { grid-column: 1 / -1; }
+.panel {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px;
+}
+.panel canvas { width: 100%; height: auto; display: block; background: #1a1a22; border-radius: 10px; }
+.preview-panel canvas { max-width: 512px; margin: 0 auto; }
+.hint { color: var(--muted); font-size: 14px; }
+.control-group { margin-top: 20px; }
+.control-label { display: block; font-weight: 600; margin-bottom: 6px; }
+.control-group input[type="text"] {
+  width: 100%; padding: 10px 12px; border-radius: 9px; border: 1px solid var(--border);
+  background: var(--bg); color: var(--text); font: inherit;
+}
+.control-group input[type="range"] { width: 100%; accent-color: var(--accent); }
+.control-group select {
+  width: 100%; padding: 10px 12px; border-radius: 9px; border: 1px solid var(--border);
+  background: var(--bg); color: var(--text); font: inherit;
+}
+.control-group input[type="color"] { width: 64px; height: 40px; padding: 2px; border: 1px solid var(--border); border-radius: 9px; background: var(--bg); }
+.check { display: flex; gap: 8px; align-items: center; margin: 8px 0; cursor: pointer; }
+.mode-row { display: flex; gap: 8px; }
+.mode-row button {
+  flex: 1; padding: 10px; border-radius: 9px; border: 1px solid var(--border);
+  background: var(--bg); color: var(--text); font: inherit; font-weight: 600; cursor: pointer;
+}
+.mode-row button.active { border-color: var(--accent); background: var(--accent); color: #fff; }
+.swatch { display: inline-block; width: 18px; height: 18px; border: 1px solid var(--border); border-radius: 4px; vertical-align: middle; background: transparent; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+.btn-primary, .btn-secondary {
+  padding: 11px 18px; border-radius: 999px; font: inherit; font-weight: 700; cursor: pointer;
+}
+.btn-primary { background: var(--accent); border: 1px solid var(--accent); color: #fff; }
+.btn-secondary { background: transparent; border: 1px solid var(--border); color: var(--text); margin-top: 14px; }
+.pack-panel { margin-top: 18px; }
+.pack-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+.pack-card { border: 1px solid var(--border); border-radius: 12px; padding: 10px; text-align: center; }
+.pack-card img { width: 100%; height: auto; border-radius: 8px; background: #1a1a22; }
+.pack-card p { font-size: 13px; color: var(--muted); margin: 6px 0; }
+.pack-actions { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.pack-actions button {
+  padding: 5px 9px; border-radius: 999px; border: 1px solid var(--border);
+  background: var(--bg); color: var(--text); font-size: 12px; cursor: pointer;
+}
+.pack-actions button:disabled { opacity: 0.4; cursor: default; }
+.info { padding: 20px 20px 40px; }
+.info h2 { font-size: 26px; }
+.info li { margin-bottom: 10px; color: var(--muted); }
+.info li strong { color: var(--text); }
+.site-footer { border-top: 1px solid var(--border); padding: 24px 0; color: var(--muted); }
+.footer-inner { display: flex; flex-wrap: wrap; gap: 4px 24px; justify-content: space-between; }
+.footer-inner p { margin: 4px 0; }
+.toast-region { position: fixed; bottom: 18px; right: 18px; z-index: 50; max-width: 340px; }
+.toast { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 10px; padding: 12px 14px; margin: 8px 0; }
+@media (max-width: 760px) {
+  .workbench { grid-template-columns: 1fr; }
+  .header-nav a:not(.btn-github) { display: none; }
+}
