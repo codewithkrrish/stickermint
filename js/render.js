@@ -49,9 +49,11 @@ export function buildSticker(input) {
   };
 }
 
-export function roundRectPath(ctx, x, y, w, h, r) {
+/* Trace a rounded rect as a subpath without starting a new path, so
+   renderSticker can combine outer + inner outlines into one evenodd
+   fill (the border ring). See the ring-fill note in renderSticker. */
+export function traceRoundRect(ctx, x, y, w, h, r) {
   const radius = Math.max(0, Math.min(r, w / 2, h / 2));
-  ctx.beginPath();
   ctx.moveTo(x + radius, y);
   ctx.lineTo(x + w - radius, y);
   ctx.arcTo(x + w, y, x + w, y + radius, radius);
@@ -64,6 +66,11 @@ export function roundRectPath(ctx, x, y, w, h, r) {
   ctx.closePath();
 }
 
+export function roundRectPath(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  traceRoundRect(ctx, x, y, w, h, r);
+}
+
 export function renderSticker(ctx, sticker, source) {
   const S = STICKER_SIZE;
   const inset = sticker.border.enabled ? sticker.border.width : 0;
@@ -72,16 +79,24 @@ export function renderSticker(ctx, sticker, source) {
   ctx.clearRect(0, 0, S, S);
   ctx.save();
 
-  // White border plate (also the sticker's outer shape). Shadow, when
-  // on, belongs to this plate only, not to the caption text.
+  // White border, drawn as a RING (outer outline minus inner outline,
+  // evenodd fill) — not a solid plate. A solid plate used to sit under
+  // the photo, so erased (transparent) pixels still showed white and
+  // the erase assist looked like it did nothing, in both preview and
+  // export. The ring is visually identical for opaque photos (the only
+  // white that ever showed was the margin), but erased areas now stay
+  // genuinely transparent. Shadow, when on, belongs to this ring only,
+  // not to the caption text.
   if (sticker.shadow) {
     ctx.shadowColor = 'rgba(0, 0, 0, 0.35)';
     ctx.shadowBlur = 18;
     ctx.shadowOffsetY = 8;
   }
-  roundRectPath(ctx, 0, 0, S, S, radius);
+  ctx.beginPath();
+  traceRoundRect(ctx, 0, 0, S, S, radius);
+  traceRoundRect(ctx, inset, inset, S - inset * 2, S - inset * 2, Math.max(0, radius - inset));
   ctx.fillStyle = '#ffffff';
-  ctx.fill();
+  ctx.fill('evenodd');
   ctx.shadowColor = 'rgba(0, 0, 0, 0)';
   ctx.shadowBlur = 0;
   ctx.shadowOffsetY = 0;

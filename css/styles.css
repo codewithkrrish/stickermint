@@ -64,6 +64,13 @@ a { color: var(--text); }
 }
 .panel canvas { width: 100%; height: auto; display: block; background: #1a1a22; border-radius: 10px; }
 .preview-panel canvas { max-width: 512px; margin: 0 auto; }
+/* Checkerboard behind the preview so erased (transparent) areas read as
+   transparent instead of looking white. This is display-only CSS; the
+   exported WebP carries real alpha, not the checkerboard. */
+.preview-panel canvas {
+  background-image: conic-gradient(#2a2a35 25%, #1a1a22 0 50%, #2a2a35 0 75%, #1a1a22 0);
+  background-size: 32px 32px;
+}
 .hint { color: var(--muted); font-size: 14px; }
 .control-group { margin-top: 20px; }
 .control-label { display: block; font-weight: 600; margin-bottom: 6px; }
